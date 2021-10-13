@@ -1,0 +1,66 @@
+package com.enlacetpe.web;
+
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+
+@Configuration
+@PropertySource({ "classpath:connection.properties" })
+public class JDBCConfiguration {
+	
+	@Autowired
+    private Environment env;
+
+	
+	
+	//Metodo para autenticar desde un sqlite, el archivo ticket.db debe ponerse en la ruta especificada
+//	@Bean
+//	 public DataSource dataSource() {
+//		DriverManagerDataSource manager = new DriverManagerDataSource(); 
+//		manager.setDriverClassName("org.sqlite.JDBC");
+//		manager.setUrl("jdbc:sqlite:/home/implementacion/tomcat/apache-tomcat-7.0.77/webapps/ticket.db");
+//		manager.setUrl("jdbc:sqlite:C:\\Apps\\sqlite-tools-win32-x86-3190000\\ticket.db");
+//		manager.setConnectionProperties(jpaProperties());
+//		return manager;
+//	}
+	
+	@Bean
+	public Properties jpaProperties() { 
+		Properties jpaProperties = new Properties();
+//MARIA DB		
+//		  jpaProperties.put("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
+//	      jpaProperties.put("hibernate.hbm2ddl.auto", "update");
+//	      jpaProperties.put("hibernate.show_sql", "true");
+//	      jpaProperties.put("hibernate.format_sql", "true");
+//	      jpaProperties.put("hibernate.connection.characterEncoding", "utf8");
+
+//ORACLE	      
+	      jpaProperties.put("hibernate.dialect", "com.oracle.jdbc.Oracle");
+	      jpaProperties.put("hibernate.hbm2ddl.auto", "validate");
+	      jpaProperties.put("hibernate.show_sql", "true");
+	      jpaProperties.put("hibernate.format_sql", "true");
+	      
+	      
+	      
+		return jpaProperties;
+	}
+	
+	@Bean
+	public DataSource dataSource() {
+		DriverManagerDataSource manager = new DriverManagerDataSource();
+		manager.setDriverClassName(env.getProperty("driver"));
+		manager.setUrl(env.getProperty("url"));
+		manager.setUsername(env.getProperty("user"));
+		manager.setPassword(env.getProperty("pass"));
+		manager.setConnectionProperties(jpaProperties()); 	
+		return manager;
+		
+	}
+}

@@ -1,0 +1,28 @@
+package com.enlacetpe.ticketapi.util;
+
+import java.io.UnsupportedEncodingException;
+
+import org.apache.axis.encoding.Base64;
+import org.apache.log4j.Logger;
+
+public class CAEncoder {
+
+	final static Logger logger = Logger.getLogger(CAEncoder.class);
+	
+	public String enCode(String chain) {
+		String encoded = null;
+		try {
+			encoded = new String(Base64.encode(chain.getBytes("UTF-8")));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			logger.error(e.toString());
+		}
+		return encoded;
+	}	
+	
+	public String deCode(String chain) {
+		String decoded = null;
+		decoded = new String(Base64.decode(chain));
+		return decoded;
+	}
+}

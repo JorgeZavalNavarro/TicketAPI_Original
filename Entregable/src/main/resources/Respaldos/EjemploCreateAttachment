@@ -1,0 +1,161 @@
+package com.enlacetpe.ticketapi.service.CMDB;
+
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+import javax.xml.rpc.holders.StringHolder;
+
+import org.apache.axis.client.Call;
+import org.springframework.stereotype.Service;
+
+import com.ca.www.UnicenterServicePlus.ServiceDesk.USD_WebServiceLocator;
+import com.ca.www.UnicenterServicePlus.ServiceDesk.USD_WebServiceSoap;
+
+
+
+@Service
+public class LoadFileManager {
+	
+	
+
+	public void loadFile() {
+		
+		try {
+			
+			String endpoint = "http://10.180.251.88:8080/axis/services/USD_R11_WebService";
+			String username = "servicio_remedy";
+			String password = new String();
+			String filename = "c:/ejemplo.txt";
+			String ServiceDeskDocumentRepository = "doc_rep:1002";
+
+			 // create a new web service stub instance
+
+			USD_WebServiceLocator ws = new USD_WebServiceLocator();
+			java.net.URL url = new java.net.URL(endpoint);
+			USD_WebServiceSoap usd = ws.getUSD_WebServiceSoap(url);
+
+			 
+			int sid = usd.login(username, password);
+			System.out.println("\nSID: " + sid);
+
+			 
+
+			 
+
+			     // getHandleForUserid()
+
+			            String custHandle = usd.getHandleForUserid(sid, username);
+
+			            System.out.println("Handle for '" + username + "' is: " + custHandle);
+
+			 
+
+			            // createRequest()
+//
+//			            ArrayOfString attrVal = new ArrayOfString();
+//
+//			            attrVal.setString(new String[]{
+//
+//			                                   "customer", custHandle, 
+//
+//			                                   "description", "Request created for a createAttachment() test"});
+//
+//			            ArrayOfString attr = new ArrayOfString();
+//
+//			            attr.setString(new String[0]);
+//
+//			            ArrayOfString prop = new ArrayOfString();
+//
+//			            prop.setString(new String[0]);
+//
+//			 
+			            
+			            
+			            String[] argsCreate = new String[] { 
+								"customer",custHandle ,
+								"description"," Request created for a createAttachment() test",
+								"type","I"
+								};	
+			            String[] propertyValues = {};
+			            String[] attributes = {};
+//
+			            StringHolder newRequestHandle = new StringHolder("cr:324074");
+
+			            StringHolder newRequestNumber = new StringHolder();
+//
+			            System.out.println(newRequestHandle.value);
+//
+//			 
+//
+			            String result;
+//
+			           // result = usd.createRequest(sid, "", argsCreate, propertyValues, "", attributes, newRequestHandle, newRequestNumber);
+			            result = usd.createRequest(sid, custHandle, argsCreate, propertyValues,new String(), attributes, newRequestHandle, newRequestNumber);
+			            
+		            System.out.println("Created Request: " + newRequestNumber.value + ", Handle: " + newRequestHandle.value);
+
+			 
+
+			 
+
+			            // Setup the client soap request
+
+			            FileDataSource fds = new FileDataSource(filename);
+
+			            DataHandler dhandler = new DataHandler(fds);
+
+			 
+
+			 
+
+			            ((org.apache.axis.client.Stub)usd)._setProperty(Call.ATTACHMENT_ENCAPSULATION_FORMAT, Call.ATTACHMENT_ENCAPSULATION_FORMAT_DIME);
+
+			            ((org.apache.axis.client.Stub)usd).addAttachment(dhandler);
+
+			           
+
+			     // createAttachment()
+
+			            String attmntHandle = usd.createAttachment(sid, ServiceDeskDocumentRepository, newRequestHandle.value, "createAttachment test file", filename);
+
+			            if (attmntHandle.length() > 0)
+
+			                System.out.println("\nSuccessfully uploaded the file to the Request, attachment handle: " + attmntHandle + "\n");
+
+			 
+
+			 
+
+			     usd.logout(sid);
+			
+
+//			String endpoint = "http://10.180.251.88:8080/axis/services/USD_R11_WebService";
+//			USD_WebServiceLocator ws = new USD_WebServiceLocator();
+//			 java.net.URL url = new java.net.URL(endpoint);
+//			USD_WebServiceSoap usd = ws.getUSD_WebServiceSoap();
+//			
+//			token = logInValidator.getToken();
+//			
+//			String repositoryHandle = "doc_rep:1002";
+//			String objectHandle = "cr:324074";
+//			String description = "mandar descripcion";
+//			String filename = "C:/ejemplo.txt";
+//			
+//			FileDataSource fds = new FileDataSource(filename);
+//			DataHandler dhandler = new DataHandler(fds);			
+//			((org.apache.axis.client.Stub)usd)._setProperty(Call.ATTACHMENT_ENCAPSULATION_FORMAT, Call.ATTACHMENT_ENCAPSULATION_FORMAT_DIME);
+//			((org.apache.axis.client.Stub)usd).addAttachment(dhandler);
+//			String respuestaWS = usd.createAttachment(token, repositoryHandle, objectHandle, description, filename);
+//					//loadFile(token, repositoryHandle, objectHandle, description, filename);
+//
+//			System.out.println("********************4");
+//			System.out.println(respuestaWS);
+//			System.out.println("********************5");
+		
+		}catch(Exception ex) {
+			System.out.println("ocurrio un error:" + ex);
+		}
+	}
+	
+	
+	
+}

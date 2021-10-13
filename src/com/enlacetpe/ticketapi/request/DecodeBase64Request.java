@@ -1,0 +1,28 @@
+package com.enlacetpe.ticketapi.request;
+
+public class DecodeBase64Request {
+	
+	private String base64;
+	private String extension;
+	private String nombre;
+	
+	public String getBase64() {
+		return base64;
+	}
+	public void setBase64(String base64) {
+		this.base64 = base64;
+	}
+	public String getExtension() {
+		return extension;
+	}
+	public String getNombre() {
+		return nombre;
+	}
+	public void setExtension(String extension) {
+		this.extension = extension;
+	}
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+	
+}
